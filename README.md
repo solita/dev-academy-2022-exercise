@@ -10,7 +10,7 @@ Data has been received from the next farms:
 Data is received as csv-files which need to be parsed for processing.
 
 Data format is
-`[Farm name], [datetime or date],[metric type]. [metric value]`
+`[Farm name], [datetime or date],[metric type], [metric value]`
 
 Example:
 `PartialTech Research Farm,2018-12-31T22:00:00.000Z,rainFall,1.4`
