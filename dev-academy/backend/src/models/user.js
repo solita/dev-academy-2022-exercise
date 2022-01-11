@@ -1,23 +1,24 @@
 const mongoose = require("mongoose")
+const Joi = require("Joi")
 
-const userSchema = mongoose.Schema({
+const userSchema = mongoose.model('User', new mongoose.Schema({
     username: {
         type: String,
         required: true,
-        trim: true, //remove whitespace
-        minLength: 3
+        minLength: 3,
+        maxLength: 20,
     },
     email: {
         type: String,
         required: true,
         unique: true,
-        trim: true,
+        minLength: 5
     },
     password: {
         type: String,
         required: true,
-        trim: true,
-        minLength: 8
+        minLength: 8,
+        maxLength: 100,
     },
     createdAt: {
         type: Date,
@@ -25,8 +26,18 @@ const userSchema = mongoose.Schema({
     }
 }, {
     timestamps: true,
-})
+}))
 
-const User = mongoose.model('User', userSchema)
+const validateUser = (user) =>{
+    
+    const schema = Joi.object({
+        username: Joi.string().min(3).max(20).required(),
+        email: Joi.string().min(5).required().email(),
+        password: Joi.string().min(8).required(),
+    })
 
-module.exports = User
+    return schema.validate(user)
+}
+
+exports.User = userSchema
+exports.validate = validateUser

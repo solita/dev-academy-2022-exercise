@@ -1,13 +1,15 @@
 const cors = require("cors")
 const express = require("express")
-const dotenv = require("dotenv")
+const dotenv = require("dotenv").config()
 const mongoose = require("mongoose")
-dotenv.config()
 const userRoutes = require("./routes/users")
 const farmRoutes = require("./routes/farms")
+const bodyParser = require("body-parser")
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 8081;
 const app = express()
+app.use(bodyParser.json({extended: true}))
+app.use(bodyParser.urlencoded({extended: true}))
 
 app.use('/', userRoutes);
 app.use('/farms', farmRoutes)

@@ -2,8 +2,8 @@ const router = require("express").Router()
 
 const userController = require("../controllers/userController")
 
-router.get("/users", userController.getUsers)
-router.get("/create-user", userController.createUser)
+router.get("/login", userController.login)
+router.post("/signup", userController.createUser)
 /* 
 TO-DO
 update user
