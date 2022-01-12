@@ -4,6 +4,7 @@ const userController = require("../controllers/userController")
 
 router.get("/login", userController.login)
 router.post("/signup", userController.createUser)
+router.get("/users", userController.getUsers)
 /* 
 TO-DO
 update user

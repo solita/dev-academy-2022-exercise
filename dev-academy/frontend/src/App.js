@@ -1,11 +1,10 @@
 import React from "react"
 import {Router} from "react-router-dom"
+import Login from "./Components/Login/Login"
 
 const App = () => {
     return(
-        <div>
-            <h1>hello world</h1>
-        </div>
+        <Login />
     )
 }
 

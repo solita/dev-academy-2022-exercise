@@ -7,13 +7,13 @@ exports.login = async (req, res) => {
     try {
         const user = await User.findOne({ email })
         const isMatch = await bcrypt.compare(password, user.password)
-        if (!user){
+        if (!user) {
             throw Error("An user with this e-mail doesn't exist!")
-        //compare passwords
-        }else if(!isMatch){
+            //compare passwords
+        } else if (!isMatch) {
             throw Error("Login information is incorrect!")
-        }else{
-            res.status(200).json({message: "User logged in!"})
+        } else {
+            res.status(200).json({ message: "User logged in!" })
         }
 
         /* TO-DO
@@ -67,4 +67,26 @@ exports.createUser = async (req, res) => {
     } catch (error) {
         res.status(409).json({ message: error.message })
     }
+}
+
+exports.getUsers = async (req, res) => {
+
+    try {
+        const users = await User.find();
+
+        if (!users) {
+            console.log('Sorry, no users to display')
+        }
+
+
+        res.status(200).send(users).json({
+            message: `User found!`
+        });
+
+    } catch (error) {
+        res.status(400).json({
+            error: error.message
+        })
+    }
+
 }

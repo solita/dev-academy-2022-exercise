@@ -8,6 +8,8 @@ const bodyParser = require("body-parser")
 
 const PORT = process.env.PORT || 8081;
 const app = express()
+app.use(cors())
+
 app.use(bodyParser.json({extended: true}))
 app.use(bodyParser.urlencoded({extended: true}))
 
@@ -21,8 +23,6 @@ app.get("/", (req, res) => {
 app.get("*", (req, res) => {
     res.send("This route doesn't exist!")
 })
-
-app.use(cors())
 
 
 mongoose
