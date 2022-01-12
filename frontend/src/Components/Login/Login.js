@@ -1,12 +1,12 @@
 import React, {useState} from "react"
 import { useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { getUsers } from "../../actions/login"
-import { useSelector } from "react-redux"
 
 import { Container, Box, Typography, TextField, Button } from "@mui/material";
 
 const Login = () => {
+    const loginState = useSelector(state => state.authReducer)
     const [loginData, setLoginData] = useState({
         email: '',
         password: ''
@@ -16,6 +16,7 @@ const Login = () => {
     const submitHandler = async (e) => {
         e.preventDefault()
         console.log(loginData)
+        console.log("AuthReducer: " + loginState)
     }
     /*const dispatch = useDispatch()
     const users = useSelector((state) => state.users)
