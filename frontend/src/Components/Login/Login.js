@@ -1,29 +1,46 @@
 import React, {useState} from "react"
-import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getUsers } from "../../actions/login"
+import { login,  } from "../../actions/login"
+import axios from "axios"
 
 import { Container, Box, Typography, TextField, Button } from "@mui/material";
 
 const Login = () => {
-    const loginState = useSelector(state => state.authReducer)
+    //const loginState = useSelector(state => state.authReducer)
+    const dispatch = useDispatch()
+    const [redirect, setRedirect] = useState(false)
+
     const [loginData, setLoginData] = useState({
         email: '',
         password: ''
     })
-    const url = "http://localhost:8081/login"
 
     const submitHandler = async (e) => {
         e.preventDefault()
-        console.log(loginData)
-        console.log("AuthReducer: " + loginState)
+        
+
+            await axios.post("http://localhost:8081/login", loginData)
+            .then(res =>{
+                if(res.data){
+                    dispatch(login(loginData))
+                    setRedirect(true)
+                    console.log("You are logged in!")
+                }
+            }).catch(e =>{
+                console.log(e.message)
+            })
+
     }
-    /*const dispatch = useDispatch()
-    const users = useSelector((state) => state.users)
-    useEffect(() => {
-        dispatch(getUsers())
-        console.log(getUsers())
-    }, [dispatch]) */
+
+    /*if(redirect){
+        return(
+            <Routes>
+                <Route exact path="/home" />
+            </Routes>
+
+        )
+    }*/
+    
 
     return (
         <Container maxWidth="sm">
@@ -35,6 +52,7 @@ const Login = () => {
                 <TextField
                     margin="normal"
                     required
+                    type="email"
                     fullWidth
                     id="email"
                     label="Email address"
@@ -42,7 +60,6 @@ const Login = () => {
                     autoFocus
                     onChange={(e) => setLoginData({...loginData, email: e.target.value})}
                 />
-
                 <TextField
                     margin="normal"
                     required
@@ -51,7 +68,6 @@ const Login = () => {
                     label="Password"
                     name="password"
                     onChange={(e) => setLoginData({...loginData, password: e.target.value})} />
-
                 <Button
                     variant="contained"
                     type="submit"

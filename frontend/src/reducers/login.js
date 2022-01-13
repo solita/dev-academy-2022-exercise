@@ -2,7 +2,7 @@
 const authReducer = (state = false, action) => {
     switch(action.type){
         case "LOGIN":
-            return !state
+            return !state && action.payload
         case "LOGOUT":
             return state
         default:

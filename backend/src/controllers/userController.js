@@ -3,25 +3,22 @@ const bcrypt = require("bcryptjs")
 
 exports.login = async (req, res) => {
     const { email, password } = req.body
+    const user = await User.findOne({ email })
 
-    try {
-        const user = await User.findOne({ email })
-        const isMatch = await bcrypt.compare(password, user.password)
-        if (!user) {
-            throw Error("An user with this e-mail doesn't exist!")
+        if (!user || user === null) {
+            return res.status(400).send("An user with this e-mail doesn't exist!")
             //compare passwords
-        } else if (!isMatch) {
-            throw Error("Login information is incorrect!")
-        } else {
-            res.status(200).json({ message: "User logged in!" })
+        }
+        const isMatch = await bcrypt.compare(password, user.password)
+        if (!isMatch) {
+            return res.status(400).send("Login information is incorrect")
+        } else if (isMatch && user != null){
+            return res.status(200).send(user.id).json({ message: "User logged in!" })
         }
 
         /* TO-DO
             JWT token signing
         */
-    } catch (error) {
-        res.status(404).json({ message: error.message })
-    }
 }
 
 exports.createUser = async (req, res) => {
@@ -60,12 +57,12 @@ exports.createUser = async (req, res) => {
             const saveUser = await newUser.save()
             if (!saveUser) throw Error("Error saving user")
 
-            res.status(201).json({
+            return res.status(201).json({
                 message: "User created successfully"
             })
         }
     } catch (error) {
-        res.status(409).json({ message: error.message })
+        return res.status(409).json({ message: error.message })
     }
 }
 
@@ -79,12 +76,12 @@ exports.getUsers = async (req, res) => {
         }
 
 
-        res.status(200).send(users).json({
+        return res.status(200).send(users).json({
             message: `User found!`
         });
 
     } catch (error) {
-        res.status(400).json({
+        return res.status(400).json({
             error: error.message
         })
     }
