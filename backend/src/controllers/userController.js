@@ -6,14 +6,16 @@ exports.login = async (req, res) => {
     const user = await User.findOne({ email })
 
         if (!user || user === null) {
-            return res.status(400).send("An user with this e-mail doesn't exist!")
+            res.status(400).send({message: "An user with this e-mail doesn't exist!"})
             //compare passwords
-        }
-        const isMatch = await bcrypt.compare(password, user.password)
-        if (!isMatch) {
-            return res.status(400).send("Login information is incorrect")
-        } else if (isMatch && user != null){
-            return res.status(200).send(user.id).json({ message: "User logged in!" })
+        } else{
+            const isMatch = await bcrypt.compare(password, user.password)
+
+            if (!isMatch) {
+                res.status(400).send({message: "Login information is incorrect"})
+            } else if (isMatch && user != null){
+                res.status(200).send({message: "You are logged in!" })
+            }
         }
 
         /* TO-DO

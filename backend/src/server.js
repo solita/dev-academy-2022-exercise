@@ -3,7 +3,7 @@ const express = require("express")
 const dotenv = require("dotenv").config()
 const mongoose = require("mongoose")
 const userRoutes = require("./routes/users")
-const farmRoutes = require("./routes/farms")
+//const farmRoutes = require("./routes/farms")
 const bodyParser = require("body-parser")
 
 const PORT = process.env.PORT || 8081;
@@ -14,7 +14,7 @@ app.use(bodyParser.json({extended: true}))
 app.use(bodyParser.urlencoded({extended: true}))
 
 app.use('/', userRoutes);
-app.use('/farms', farmRoutes)
+//app.use('/farms')
 
 app.get("/", (req, res) => {
     res.send("King of all routes")
