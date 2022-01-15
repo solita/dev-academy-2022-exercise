@@ -1,7 +1,6 @@
 const { Farm, validate } = require("../models/farm")
 
 exports.createFarm = async (req, res) => {
-
     const { error } = validate(req.body)
     if (error) {
         return res.status(400).json({ message: error.message })
@@ -62,6 +61,7 @@ exports.getFarmsData = async (req, res) => {
 
 }
 
+//Append data to db
 exports.appendFarmData = async (req, res) => {
     const { id } = req.params
 
@@ -70,11 +70,25 @@ exports.appendFarmData = async (req, res) => {
     const array = []
 
     await body.forEach(data => {
-        //console.log("This is data " + JSON.stringify(data))
-        //console.log("Req " + id)
+        const sensor = data.sensorType
+        const value = data.metricValue
 
-        array.push(data)
-
+        switch (data) {
+            case sensor === "rainFall":
+                if (value >= 0 && value <= 500) {
+                    array.push(data)
+                }
+            case sensor === "pH":
+                if (value >= 0 && value <= 14) {
+                    array.push(data)
+                }
+            case sensor === "temperature":
+                if (value >= -50 && value <= 100) {
+                    array.push(data)
+                }
+            default:
+                res.send({message: "Data not valid"})
+        }
     })
 
     const farm = await Farm.findOneAndUpdate({
