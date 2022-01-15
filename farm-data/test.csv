@@ -1,0 +1,6 @@
+location,datetime,sensorType,value
+PartialTech Research Farm,2018-12-31T22:00:00.000Z,pH,5.90
+PartialTech Research Farm,2018-12-31T22:00:00.000Z,rainFall,1.4
+PartialTech Research Farm,2019-01-01T11:51:40.150Z,temperature,-8.0
+PartialTech Research Farm,2018-12-31T22:17:12.693Z,temperature,-13.0
+PartialTech Research Farm,2019-01-01T02:10:20.346Z,temperature,-10.9

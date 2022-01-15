@@ -1,25 +1,43 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { parse } from "papaparse"
+import axios from "axios"
 import { Container, Box, Typography, TextField, Button, Stack, Select, MenuItem, InputLabel, Input } from "@mui/material"
 
 function Farm() {
 
     const [selection, setSelection] = useState('')
-    const [farm, setFarm] = useState([{
+    const [menu, setMenu] = useState([])
+    const [farm, setFarm] = useState([])
+
+    /*[{
         location: null,
         datetime: null,
         sensorType: null,
         value: null
-    }])
+    }]*/
 
     const handleChange = (e) => {
         e.preventDefault()
 
         setSelection(e.target.value)
+        console.log(selection)
 
     }
 
-    const handleDrop = (e) => {
+    const appendData = async(data, id) => {
+
+        await axios.post(`http://localhost:8081/farms/add-data/${id}`, data)
+            .then(res => {
+                console.log(res)
+                console.log(res.data)
+            }).catch(e => {
+                console.log({ message: e })
+            }
+            )
+    }
+
+    //parse CSV and append to the destination farm
+    const handleDrop = async (e) => {
         e.preventDefault()
 
         //TO-DO validate filetype
@@ -28,11 +46,48 @@ function Farm() {
             .forEach(async (file) => {
                 const data = await file.text()
                 const result = parse(data, { header: true })
-                console.log(result)
-                setFarm(...selection, result.data)
+                setFarm(...farm, result.data)
             })
-        console.log(e.dataTransfer.files)
+
+            if(farm.length > 0){
+                appendData(farm, selection)
+            }else{
+                console.log("error")
+            }
     }
+
+    if(farm.length > 0){
+        appendData(farm,selection)
+    }
+
+    //get all of the farms
+    const farmFetch = () => {
+        axios.get(`http://localhost:8081/farms`)
+            .then(res => {
+
+                const result = res.data
+
+                //extract names for the selection
+                for (var i in result) {
+                    const farmName = result[i]["farmName"]
+                    const foo = {
+                        farmName: farmName,
+                        id: result[i]["_id"]
+                    }
+
+                    setMenu(prev => [...prev, foo])
+                }
+
+            }).catch(e => {
+                console.log({ message: e })
+            })
+    }
+
+
+
+    useEffect(() => {
+        farmFetch()
+    }, [])
 
     return (
         <Container maxWidth="sm">
@@ -43,20 +98,23 @@ function Farm() {
                 >
                     Input a farm's CSV file
                 </Typography>
-                <InputLabel htmlFor="selector">age</InputLabel>
+                <InputLabel htmlFor="selector">Farm</InputLabel>
                 <Select
                     label="Farms"
                     variant="outlined"
-                    input={<Input name="age" id="age-helper" />}
+                    input={<Input name="Farm" />}
                     id="selector"
-                    value={selection}
+                    defaultValue=""
                     fullWidth
                     onChange={handleChange}
                     sx={{ background: "#e3e3e3", marginBottom: 5 }}
                 >
-                    <MenuItem value={"Farm1"}>Farm</MenuItem>
-                    <MenuItem value={"Farm1"}>Farm1</MenuItem>
-                    <MenuItem value={"Farm1"}>Farm2</MenuItem>
+                    {menu.map(farm => {
+                        return (
+                            <MenuItem key={farm.id} value={farm.id}>{farm.farmName}</MenuItem>
+                        )
+                    })}
+
                 </Select>
                 <TextField
                     label="Drop it here"
@@ -70,8 +128,8 @@ function Farm() {
                 />
             </Box>
             <Box>
-                {farm.map((farm) => (
-                    <li>
+                {farm > 0 ? farm.map((farm) => (
+                    <li key={farm}>
                         <ul>
                             <strong>{farm.location}</strong>
                             <p>{farm.datetime}</p>
@@ -79,7 +137,7 @@ function Farm() {
                             <p>{farm.value}</p>
                         </ul>
                     </li>
-                ))}
+                )) : null}
             </Box>
         </Container>
     )

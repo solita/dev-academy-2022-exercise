@@ -1,8 +1,18 @@
 const { User, validate } = require("../models/user")
 const bcrypt = require("bcryptjs")
+const {validationResult} = require("express-validator")
 
 exports.login = async (req, res) => {
     const { email, password } = req.body
+
+    /*const errors = validationResult(req)
+    console.log(errors)
+    if(!errors.isEmpty()) {
+        const alert = errors.array()
+        return res.render("signup", {
+            alert
+        })
+    }*/
     const user = await User.findOne({ email })
 
         if (!user || user === null) {
@@ -18,6 +28,8 @@ exports.login = async (req, res) => {
             }
         }
 
+
+
         /* TO-DO
             JWT token signing
         */
@@ -29,6 +41,14 @@ exports.createUser = async (req, res) => {
     if (error) {
         return res.status(400).json({ message: error.message })
     }
+
+    /*const errors = validationResult(req)
+    console.log(errors)
+    if(!errors.isEmpty()) {
+        const alert = errors.array()
+        return res.status(422).json({errors: alert})
+    }*/
+
 
     const {
         username,
