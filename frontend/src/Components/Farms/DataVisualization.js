@@ -91,8 +91,9 @@ function DataVisualization() {
                     variant="outlined"
                     input={<Input />}
                     id="selector"
-                    defaultValue=""
+                    defaultValue={menu[0]}
                     fullWidth
+                    value={selection}
                     onChange={handleSelection}
                     sx={{ background: "#e3e3e3", marginBottom: 5 }}
                 >

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { parse } from "papaparse"
 import axios from "axios"
-import { Container, Box, Typography, TextField, Button, Stack, Select, MenuItem, InputLabel, Input } from "@mui/material"
+import { Container, Box, Typography, TextField, Select, MenuItem, InputLabel, OutlinedInput } from "@mui/material"
 
 function Farm() {
 
@@ -37,11 +37,28 @@ function Farm() {
             .forEach(async (file) => {
                 const data = await file.text()
                 const result = parse(data, { header: true })
-                console.log(result.data)
-                setFarm(result.data)
+                const filteredData = result.data
+
+                /*console.log(filteredData)
+                const sensor = filteredData.sensorType
+                const value = filteredData.value*/
+                filteredData.forEach((data) => {
+                    let sensor = data.sensorType
+                    let value = data.value
+
+                    if (sensor === "rainFall" && value >= 0 && value <= 500) {
+                        farm.push(data)
+                    } else if (sensor == "pH" && value >= 0 && value <= 14) {
+                        farm.push(data)
+                    } else if (sensor == "temperature" && value >= -50 && value <= 100) {
+                        farm.push(data)
+                    }
+                })
+                appendData(farm, selection)
             })
 
-        appendData(farm, selection)
+
+        console.log(farm)
     }
 
 
@@ -85,11 +102,12 @@ function Farm() {
                 <Select
                     label="Farms"
                     variant="outlined"
-                    input={<Input name="Farm" />}
                     id="selector"
+                    input={<OutlinedInput name="Farm" />}
                     defaultValue=""
                     fullWidth
                     onChange={handleChange}
+
                     sx={{ background: "#e3e3e3", marginBottom: 5 }}
                 >
                     {menu.map(farm => {
