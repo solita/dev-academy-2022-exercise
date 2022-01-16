@@ -67,44 +67,49 @@ exports.appendFarmData = async (req, res) => {
 
 
     const body = req.body
-    const array = []
+    let array = []
 
-    await body.forEach(data => {
-        const sensor = data.sensorType
-        const value = data.metricValue
+    /*const appendData = (array) => {
+        body.forEach(data => {
+            const sensor = data.sensorType
+            const value = data.metricValue
+            console.log(data)
 
-        switch (data) {
-            case sensor === "rainFall":
-                if (value >= 0 && value <= 500) {
-                    array.push(data)
-                }
-            case sensor === "pH":
-                if (value >= 0 && value <= 14) {
-                    array.push(data)
-                }
-            case sensor === "temperature":
-                if (value >= -50 && value <= 100) {
-                    array.push(data)
-                }
-            default:
-                res.send({message: "Data not valid"})
-        }
-    })
+            switch (data) {
+                case sensor === "rainFall":
+                    if (value >= 0 && value <= 500) {
+                        array.push(data)
+                    }
+                case sensor === "pH":
+                    if (value >= 0 && value <= 14) {
+                        array.push(data)
+                    }
+                case sensor === "temperature":
+                    if (value >= -50 && value <= 100) {
+                        array.push(data)
+                    }
+                default:
+                    break
+            }
+        })
+    }*/
 
-    const farm = await Farm.findOneAndUpdate({
+
+
+    await Farm.findOneAndUpdate({
         _id: id
     }, {
         $push: {
-            data: array
+            data: body
         }
     })
 
 
 
-    if (!farm) {
-        res.status(400).send({ message: "There is no such farm in our database " })
+    if (array <= 0) {
+        return res.status(400).send({ message: "There is no such farm in our database " })
     } else {
-        res.status(200).send({ message: `A whole bunch of data got added` })
+        return res.status(200).send({ message: `A whole bunch of data got added` })
     }
 
 

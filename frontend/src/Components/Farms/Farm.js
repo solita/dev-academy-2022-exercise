@@ -9,26 +9,16 @@ function Farm() {
     const [menu, setMenu] = useState([])
     const [farm, setFarm] = useState([])
 
-    /*[{
-        location: null,
-        datetime: null,
-        sensorType: null,
-        value: null
-    }]*/
-
     const handleChange = (e) => {
         e.preventDefault()
 
         setSelection(e.target.value)
         console.log(selection)
-
     }
 
-    const appendData = async(data, id) => {
-
+    const appendData = async (data, id) => {
         await axios.post(`http://localhost:8081/farms/add-data/${id}`, data)
             .then(res => {
-                console.log(res)
                 console.log(res.data)
             }).catch(e => {
                 console.log({ message: e })
@@ -39,6 +29,7 @@ function Farm() {
     //parse CSV and append to the destination farm
     const handleDrop = async (e) => {
         e.preventDefault()
+        setFarm([])
 
         //TO-DO validate filetype
         Array.from(e.dataTransfer.files)
@@ -46,27 +37,20 @@ function Farm() {
             .forEach(async (file) => {
                 const data = await file.text()
                 const result = parse(data, { header: true })
-                setFarm(...farm, result.data)
+                console.log(result.data)
+                setFarm(result.data)
             })
 
-            if(farm.length > 0){
-                appendData(farm, selection)
-            }else{
-                console.log("error")
-            }
+        appendData(farm, selection)
     }
 
-    if(farm.length > 0){
-        appendData(farm,selection)
-    }
+
 
     //get all of the farms
-    const farmFetch = () => {
-        axios.get(`http://localhost:8081/farms`)
+    const farmFetch = async () => {
+        await axios.get("http://localhost:8081/farms")
             .then(res => {
-
                 const result = res.data
-
                 //extract names for the selection
                 for (var i in result) {
                     const farmName = result[i]["farmName"]
@@ -77,7 +61,6 @@ function Farm() {
 
                     setMenu(prev => [...prev, foo])
                 }
-
             }).catch(e => {
                 console.log({ message: e })
             })
@@ -111,7 +94,7 @@ function Farm() {
                 >
                     {menu.map(farm => {
                         return (
-                            <MenuItem key={farm.id} value={farm.id}>{farm.farmName}</MenuItem>
+                            <MenuItem key={farm.id} value={farm.id} onChange={handleChange}>{farm.farmName}</MenuItem>
                         )
                     })}
 

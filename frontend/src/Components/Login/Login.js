@@ -43,6 +43,7 @@ const Login = () => {
     
 
     return (
+        <div>
         <Container maxWidth="sm">
             <Box>
                 <form>
@@ -94,6 +95,8 @@ const Login = () => {
                 ) : (null)}
             </Box>
         </Container>
+        </div>
+
     )
 }
 
