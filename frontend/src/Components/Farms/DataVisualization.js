@@ -66,7 +66,6 @@ function DataVisualization() {
             .then(res => {
                 setFarm([])
                 const results = res.data
-                console.log(results)
                 console.log(results["data"])
                 results["data"].forEach(row => {
                     setFarm(prev => [...prev, row])
@@ -74,6 +73,7 @@ function DataVisualization() {
             }).catch(e => {
                 console.log({ message: e })
             })
+
     }
 
     useEffect(() => {
@@ -89,7 +89,7 @@ function DataVisualization() {
                 <Select
                     label="Farms"
                     variant="outlined"
-                    input={<Input name="Farm" />}
+                    input={<Input />}
                     id="selector"
                     defaultValue=""
                     fullWidth
@@ -114,8 +114,8 @@ function DataVisualization() {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {farm.map((row) => (
-                            <TableRow key={row.datetime}>
+                        {farm.length > 0 ? farm.map((row) => (
+                            <TableRow key={row.datatime}>
                                 <TableCell>{row.datetime}</TableCell>
                                 <TableCell>{
                                     row.sensorType == "rainFall" ? "Rainfall"
@@ -135,7 +135,7 @@ function DataVisualization() {
                                     </Grid>
                                 </TableCell>
                             </TableRow>
-                        ))}
+                        )) : <h1>Loading...</h1>}
                     </TableBody>
                 </Table>
             </TableContainer>

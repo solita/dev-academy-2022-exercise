@@ -38,6 +38,7 @@ exports.createFarm = async (req, res) => {
     }
 }
 
+//get all farms
 exports.getAllData = async (req, res) => {
     const farms = await Farm.find();
 
@@ -45,14 +46,14 @@ exports.getAllData = async (req, res) => {
         res.status(400).send({ message: "No farms to display" })
     }
     return res.status(200).send(farms)
-
 }
 
+//fetch one farm's data
 exports.getFarmsData = async (req, res) => {
     const {
         id
     } = req.params
-    const farm = await Farm.find({ _id: id });
+    const farm = await Farm.findOne({ _id: id });
 
     if (!farm) {
         res.status(400).send({ message: "No farms to display" })
@@ -106,7 +107,7 @@ exports.appendFarmData = async (req, res) => {
 
 
 
-    if (array <= 0) {
+    if (body.length <= 0) {
         return res.status(400).send({ message: "There is no such farm in our database " })
     } else {
         return res.status(200).send({ message: `A whole bunch of data got added` })
