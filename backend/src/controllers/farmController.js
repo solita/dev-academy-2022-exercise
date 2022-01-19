@@ -68,36 +68,8 @@ exports.appendFarmData = async (req, res) => {
 
 
     const body = req.body
-    let array = []
 
-    /*const appendData = (array) => {
-        body.forEach(data => {
-            const sensor = data.sensorType
-            const value = data.metricValue
-            console.log(data)
-
-            switch (data) {
-                case sensor === "rainFall":
-                    if (value >= 0 && value <= 500) {
-                        array.push(data)
-                    }
-                case sensor === "pH":
-                    if (value >= 0 && value <= 14) {
-                        array.push(data)
-                    }
-                case sensor === "temperature":
-                    if (value >= -50 && value <= 100) {
-                        array.push(data)
-                    }
-                default:
-                    break
-            }
-        })
-    }*/
-
-
-
-    await Farm.findOneAndUpdate({
+    const farm = await Farm.findOneAndUpdate({
         _id: id
     }, {
         $push: {
@@ -105,13 +77,55 @@ exports.appendFarmData = async (req, res) => {
         }
     })
 
-
-
     if (body.length <= 0) {
-        return res.status(400).send({ message: "There is no such farm in our database " })
+        return res.status(400).send({ message: "The request body is empty " })
+    } else if (!farm) {
+        return res.status(400).send({ message: "Couldn't find the specified farm" })
     } else {
-        return res.status(200).send({ message: `A whole bunch of data got added` })
+        return res.status(200).send({ message: "Successfuly appended the data!" })
     }
 
 
 }
+
+//Fetch farms by metric type
+exports.getBySensorType = async (req, res) => {
+
+    const { id } = req.params
+
+    try {
+        /*const body = await Farm.find({
+            data: { $elemMatch: {sensorType: "temperature", value: "-8.0" }}
+        });*/
+
+        /*const body = await Farm.find({
+            _id: id
+        }).projection({ item: 1, status: 1, data: {$slice: -1}})
+
+        return res.status(200).json({
+            status: "success",
+            data: body
+        })*/
+
+        /*const body = await Farm.find({
+            "data.sensorType": "rainFall",
+            "data.value": {
+                "$gt": "1"
+            }
+        }, {"data.location": 0, "data.datetime": 0, "data.sensorType": 0})
+        res.status(200).json(body)*/
+        const body = await Farm.aggregate([
+            {"$unwind": "$data"},
+            {"$group": {
+                "_id": "rainFall",
+                "avgSize": {$avg: "$value"}
+            }}
+        ])
+        res.status(200).json(body)
+
+    } catch (e) {
+        return res.status(400).send({ message: "Couldn't find any data" + e })
+    }
+}
+
+//Fetch farms by month

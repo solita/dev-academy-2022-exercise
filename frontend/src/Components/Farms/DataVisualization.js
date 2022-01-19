@@ -3,6 +3,7 @@ import axios from "axios"
 import "./DataVisualization.css"
 import { Table, TableContainer, TableCell, Paper, TableBody, TableHead, TableRow, Grid, Typography, Select, Input, InputLabel, MenuItem } from "@mui/material"
 import ThermostatIcon from '@mui/icons-material/Thermostat';
+import ArrowDownwardOutlinedIcon from '@mui/icons-material/ArrowDownwardOutlined';
 import WaterDrop from "./waterDrop.png"
 import RainFall from "./rainFall.png"
 
@@ -12,8 +13,7 @@ function DataVisualization() {
     const [farm, setFarm] = useState([])
     const [menu, setMenu] = useState([])
     const [selection, setSelection] = useState('')
-
-    const array = ["Hey", "famous"]
+    const [order, setOrder] = useState("ASC")
 
     const classes = {
         table: {
@@ -28,6 +28,9 @@ function DataVisualization() {
         tableHeaderCell: {
             fontWeight: "bold",
             backgroundColor: "orange"
+        },
+        tableCell: {
+            justifyContent: "center",
         }
     }
 
@@ -58,6 +61,23 @@ function DataVisualization() {
             }).catch(e => {
                 console.log({ message: e })
             })
+    }
+
+    const sorting = (param) => {
+        if (order === "ASC") {
+            const sorted = farm.sort((a, b) =>
+                a[param].toLowerCase() > b[param].toLowerCase() ? 1 : -1
+            )
+            setFarm(sorted)
+            setOrder("DSC")
+        }
+        if (order === "DSC") {
+            const sorted = [...farm].sort((a, b) =>
+                a[param].toLowerCase() < b[param].toLowerCase() ? 1 : -1
+            )
+            setFarm(sorted)
+            setOrder("ASC")
+        }
     }
 
     //fetch a farm and it's data
@@ -109,9 +129,16 @@ function DataVisualization() {
                 <Table className={classes.table}>
                     <TableHead sx={classes.tableHeaderCell}>
                         <TableRow>
-                            <TableCell>Date</TableCell>
-                            <TableCell>Sensor type</TableCell>
-                            <TableCell>Value</TableCell>
+                            <TableCell className={classes.tableCell} onClick={() => sorting("datetime")}>
+                                Date
+                                <ArrowDownwardOutlinedIcon />
+                            </TableCell>
+                            <TableCell onClick={() => sorting("sensorType")}>Sensor type
+                                <ArrowDownwardOutlinedIcon />
+                            </TableCell>
+                            <TableCell onClick={() => sorting("value")}>Value
+                                <ArrowDownwardOutlinedIcon />
+                            </TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>

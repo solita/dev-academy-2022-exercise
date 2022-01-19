@@ -8,8 +8,9 @@ const bodyParser = require("body-parser")
 
 const PORT = process.env.PORT || 8081;
 const app = express()
-app.use(express.json())
 app.use(cors())
+app.use(express.json())
+
 
 app.use(bodyParser.json({extended: true}))
 app.use(bodyParser.urlencoded({extended: true}))
